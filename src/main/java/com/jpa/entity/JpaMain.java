@@ -14,8 +14,12 @@ public class JpaMain {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        logic(em);
+
+        save(em);
+
         tx.commit();
+        em.close();
+        emf.close();
         /*
         // 엔티티 매니저 - 생성
         // 엔티티 매니저 팩토리에서 엔티티 매니저를 생성한다.
@@ -39,5 +43,21 @@ public class JpaMain {
         member.setUsername("jyh");
         em.persist(member);
         System.out.println("member.getId() = " + member.getId());
+    }
+
+    private static void save(final EntityManager em){
+        // 팀1 저장
+        Team team1 = new Team("team1", "팀1");
+        em.persist(team1);
+
+        // 회원1 저장
+        Member member1 = new Member("member1", "회원1");
+        member1.setTeam(team1); // 연관관계 설정 member1 -> team1
+        em.persist(member1);
+
+        // 회원2 저장
+        Member member2 = new Member("member2", "회원2");
+        member2.setTeam(team1); // 연관관계 설정 member2 -> team1
+        em.persist(member2);
     }
 }

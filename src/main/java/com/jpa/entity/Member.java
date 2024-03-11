@@ -6,38 +6,42 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@TableGenerator(
-        name = "MEMBER_SEQ_GENERATOR",
-        table  = "MY_SEQUENCES",
-        pkColumnValue="MEMBER_SEQ", allocationSize = 1)
 public class Member {
-    @Id
-    @GeneratedValue
-    private Long id;
 
-    @Column(name="NAME", nullable = false, length = 10)
+    @Id
+    @Column(name = "member_id")
+    private String id;
+
     private String username;
 
-    // 매핑 정보가 없는 필드
-    private Integer age;
+    // 연관관계 매핑
+    @ManyToOne
+//      (cascade = {CascadeType.ALL})
+    @JoinColumn(name = "team_id")
+    private Team team;
 
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    public Member() {
+    }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    public Member(final String id, final String username) {
+        this.id = id;
+        this.username = username;
+    }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
+    // 연관관계 설정
+    public void setTeam(final Team team) {
+        if (this.team != null) {
+            this.team.getMembers().remove(this);
+        }
+        this.team = team;
+        team.getMembers().add(this);
+    }
 
-    @Lob
-    private String description;
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -45,16 +49,12 @@ public class Member {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
+    public Team getTeam() {
+        return team;
     }
 
 }
